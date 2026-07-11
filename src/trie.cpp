@@ -1,5 +1,7 @@
 #include "../include/trie.h"
 #include <algorithm>
+#include <cctype>
+
 TrieNode::TrieNode(){
     isEndOfWord = false;
     frequency = 0;
@@ -43,7 +45,7 @@ void Trie::insert(const std::string& word, uint64_t frequency) {
 std::vector<std::string> Trie::getTopK(const std::string& prefix, int k) {
     TrieNode* current = root;
     for (char c : prefix){
-        int index = c - 'a';
+        int index = std::tolower(c) - 'a';
         if (!current->children[index]) {
             return {}; //prefix not found
         }
@@ -52,6 +54,9 @@ std::vector<std::string> Trie::getTopK(const std::string& prefix, int k) {
     std::vector<std::pair<std::string, uint64_t>> candidates;
     dfsHelper(current, prefix, candidates);
     std::sort(candidates.begin(), candidates.end(), [](const auto& a, const auto& b) {
+        if (a.second == b.second) {
+            return a.first < b.first;
+        }
         return a.second > b.second; //sort by frequency in descending order
     });
     std::vector<std::string> res;
