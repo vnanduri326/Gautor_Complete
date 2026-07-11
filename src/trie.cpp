@@ -60,3 +60,22 @@ std::vector<std::string> Trie::getTopK(const std::string& prefix, int k) {
     dfsHelper(current, lowerPrefix, candidates);              // CHANGE: seed with lowerPrefix, not prefix
     // ... sort + return unchanged (already correct)
 }
+
+size_t Trie::countNodes(TrieNode* node) const {
+    if (!node) return 0;
+    size_t total = 1;                               // this node
+    for (int i = 0; i < 26; ++i) {
+        total += countNodes(node->children[i]);     // plus everything below it
+    }
+    return total;
+}
+
+size_t Trie::nodeCount() const {
+    return countNodes(root);
+}
+
+size_t Trie::memoryBytes() const {
+    // Every node is identical in size: 26 pointers + a bool + a uint64 (padded).
+    // The trie stores no strings, so nodeCount * nodeSize is the whole story.
+    return nodeCount() * sizeof(TrieNode);
+}

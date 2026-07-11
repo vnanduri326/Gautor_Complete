@@ -25,4 +25,9 @@ public:
 
     void insert(const std::string& word, uint64_t frequency);
     std::vector<std::string> getTopK(const std::string& prefix, int k);
+    size_t memoryBytes() const;      // heap bytes owned by this table
+    size_t nodeCount() const;        // total HashNodes (= distinct prefixes stored)
+    double avgChainLength() const;   // load factor: how well BUCKETS is sized
+    size_t longestChain() const;     // worst-case lookup walk
+};
 };

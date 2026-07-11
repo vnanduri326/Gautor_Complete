@@ -110,3 +110,61 @@ std::vector<std::string> HashMap::getTopK(const std::string& prefix, int k) {
     }
     return topK;
 }
+
+size_t HashMap::nodeCount() const {
+    size_t count = 0;
+    for (size_t i = 0; i < BUCKETS; i++) {
+        for (HashNode* curr = table[i]; curr != nullptr; curr = curr->nextPossiblePrefix) {
+            count++;
+        }
+    }
+    return count;
+}
+
+size_t HashMap::memoryBytes() const {
+    size_t total = BUCKETS * sizeof(HashNode*);   // the bucket array itself
+
+    for (size_t i = 0; i < BUCKETS; i++) {
+        for (HashNode* curr = table[i]; curr != nullptr; curr = curr->nextPossiblePrefix) {
+            total += sizeof(HashNode);            // the node struct
+
+            // std::string keeps short strings (<=15 chars) inside the object itself
+            // (small-string optimization), so only count heap use beyond that.
+            if (curr->prefix.capacity() > 15) {
+                total += curr->prefix.capacity();
+            }
+
+            // the vector's buffer of (word, frequency) pairs
+            total += curr->probableWords.capacity() * sizeof(std::pair<std::string, uint64_t>);
+
+            // each stored word, if it spilled past the small-string buffer
+            for (size_t j = 0; j < curr->probableWords.size(); j++) {
+                if (curr->probableWords[j].first.capacity() > 15) {
+                    total += curr->probableWords[j].first.capacity();
+                }
+            }
+        }
+    }
+    return total;
+}
+
+double HashMap::avgChainLength() const {
+    size_t usedBuckets = 0;
+    for (size_t i = 0; i < BUCKETS; i++) {
+        if (table[i] != nullptr) usedBuckets++;
+    }
+    if (usedBuckets == 0) return 0.0;
+    return static_cast<double>(nodeCount()) / static_cast<double>(usedBuckets);
+}
+
+size_t HashMap::longestChain() const {
+    size_t worst = 0;
+    for (size_t i = 0; i < BUCKETS; i++) {
+        size_t len = 0;
+        for (HashNode* curr = table[i]; curr != nullptr; curr = curr->nextPossiblePrefix) {
+            len++;
+        }
+        if (len > worst) worst = len;
+    }
+    return worst;
+}

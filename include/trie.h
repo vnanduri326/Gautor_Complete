@@ -16,6 +16,7 @@ class Trie {
 private:
     TrieNode* root;
     void dfsHelper(TrieNode* current, std::string currentWord, std::vector<std::pair<std::string, uint64_t>>& candidates);
+    size_t countNodes(TrieNode* node) const;
 
 public:
     Trie();
@@ -23,4 +24,6 @@ public:
 
     void insert(const std::string& word, uint64_t frequency);
     std::vector<std::string> getTopK(const std::string& prefix, int k);
+    size_t memoryBytes() const;   // heap bytes owned by this trie
+    size_t nodeCount() const;     // total TrieNodes allocated
 };
