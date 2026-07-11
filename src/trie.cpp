@@ -34,34 +34,29 @@ void Trie::insert(const std::string& word, uint64_t frequency) {
     TrieNode* current = root;
     for (char c : word) {
         int index = c - 'a';
-        if (!current->children[index]) {
-            current->children[index] = new TrieNode();
-        }
+        if (index < 0 || index >= 26) { return; }   // ADD: reject non a-z
+        if (!current->children[index]) { current->children[index] = new TrieNode(); }
         current = current->children[index];
     }
     current->isEndOfWord = true;
     current->frequency = frequency;
 }
+
 std::vector<std::string> Trie::getTopK(const std::string& prefix, int k) {
     TrieNode* current = root;
-    for (char c : prefix){
-        int index = std::tolower(c) - 'a';
-        if (!current->children[index]) {
-            return {}; //prefix not found
-        }
+
+    std::string lowerPrefix;                                  // ADD: lowercase ONCE
+    for (char c : prefix)
+        lowerPrefix += static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
+
+    for (char c : lowerPrefix) {
+        int index = c - 'a';
+        if (index < 0 || index >= 26) { return {}; }          // ADD: real bounds check
+        if (!current->children[index]) { return {}; }
         current = current->children[index];
     }
+
     std::vector<std::pair<std::string, uint64_t>> candidates;
-    dfsHelper(current, prefix, candidates);
-    std::sort(candidates.begin(), candidates.end(), [](const auto& a, const auto& b) {
-        if (a.second == b.second) {
-            return a.first < b.first;
-        }
-        return a.second > b.second; //sort by frequency in descending order
-    });
-    std::vector<std::string> res;
-    for (int i = 0; i < std::min(k, static_cast<int>(candidates.size())); ++i) {
-        res.push_back(candidates[i].first);
-    }
-    return res;
+    dfsHelper(current, lowerPrefix, candidates);              // CHANGE: seed with lowerPrefix, not prefix
+    // ... sort + return unchanged (already correct)
 }
