@@ -1,5 +1,4 @@
-#define CATCH_CONFIG_MAIN  
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 #include "../include/trie.h"
 
 TEST_CASE("Trie Basic Operations", "[trie]") {

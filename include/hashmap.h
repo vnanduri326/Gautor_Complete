@@ -1,15 +1,14 @@
 #pragma once
 #include <string>
-#include <cstdint>
 #include <vector>
 
 struct HashNode {
     std::string prefix;
-    std::vector<std::pair<std::string, uint64_t>> possibleWords;
+    std::vector<std::pair<std::string, uint64_t>> probableWords;
     HashNode* nextPossiblePrefix; // For avoiding hash collisions
 
     HashNode(std::string prefix);
-    void insertPredictedWord(const std::string&, int maxCap);
+    void insertPredictedWord(const std::string& word, uint64_t frequency, int maxCap);
 };
 
 class HashMap {
@@ -18,12 +17,12 @@ class HashMap {
     HashNode** table;
 
     uint64_t hashFunction(const std::string& prefix);
-    void updateBucket(const std::string& prefix, const std::string& word, uint64_t frequency);
+    void insertHelper(const std::string& prefix, const std::string& word, uint64_t frequency);
 
 public:
     HashMap(int wordCap);
     ~HashMap();
 
     void insert(const std::string& word, uint64_t frequency);
-    std::vector<std::string> getTopK(const std::string& word, int k);
+    std::vector<std::string> getTopK(const std::string& prefix, int k);
 };

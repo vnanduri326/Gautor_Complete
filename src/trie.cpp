@@ -1,4 +1,4 @@
-#include "include/trie.h"
+#include "../include/trie.h"
 #include <algorithm>
 TrieNode::TrieNode(){
     isEndOfWord = false;
@@ -58,7 +58,5 @@ std::vector<std::string> Trie::getTopK(const std::string& prefix, int k) {
     for (int i = 0; i < std::min(k, static_cast<int>(candidates.size())); ++i) {
         res.push_back(candidates[i].first);
     }
-    return res;   
-    
-
+    return res;
 }
