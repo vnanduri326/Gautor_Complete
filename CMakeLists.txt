@@ -21,5 +21,4 @@ add_executable(trie_tests
 
 target_link_libraries(trie_tests PRIVATE gautor_core Catch2::Catch2)
 
-# Make it discoverable by CTest
 add_test(NAME TrieTests COMMAND trie_tests)
