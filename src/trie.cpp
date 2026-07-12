@@ -45,20 +45,33 @@ void Trie::insert(const std::string& word, uint64_t frequency) {
 std::vector<std::string> Trie::getTopK(const std::string& prefix, int k) {
     TrieNode* current = root;
 
-    std::string lowerPrefix;                                  // ADD: lowercase ONCE
+    std::string lowerPrefix;
     for (char c : prefix)
         lowerPrefix += static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
 
     for (char c : lowerPrefix) {
         int index = c - 'a';
-        if (index < 0 || index >= 26) { return {}; }          // ADD: real bounds check
+        if (index < 0 || index >= 26) { return {}; }
         if (!current->children[index]) { return {}; }
         current = current->children[index];
     }
 
     std::vector<std::pair<std::string, uint64_t>> candidates;
-    dfsHelper(current, lowerPrefix, candidates);              // CHANGE: seed with lowerPrefix, not prefix
-    // ... sort + return unchanged (already correct)
+    dfsHelper(current, lowerPrefix, candidates);
+
+    std::sort(candidates.begin(), candidates.end(), [](const auto& a, const auto& b) {
+        if (a.second == b.second) {
+            return a.first < b.first;
+        }
+        return a.second > b.second;
+    });
+
+    std::vector<std::string> result;
+    for (int i = 0; i < std::min(k, static_cast<int>(candidates.size())); ++i) {
+        result.push_back(candidates[i].first);
+    }
+
+    return result;
 }
 
 size_t Trie::countNodes(TrieNode* node) const {

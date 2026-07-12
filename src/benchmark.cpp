@@ -4,7 +4,7 @@
 // verifies both return identical results, and writes results/results.csv
 // (open that in Google Sheets to chart it for the report).
 //
-// Run:    ./benchmark data/unigram_freq.csv [maxWords]
+// Run:    ./benchmark ../data/unigram_freq.csv [maxWords]
 // Writes: results/results.csv
 //
 // NOTE: must be built with -O2. Timing an unoptimized build is meaningless.
@@ -63,7 +63,7 @@ static std::vector<std::string> makeQueries(const std::vector<WordEntry>& data,
 }
 
 int main(int argc, char** argv) {
-    const std::string path = (argc > 1) ? argv[1] : "data/unigram_freq.csv";
+    const std::string path = (argc > 1) ? argv[1] : "../data/unigram_freq.csv";
     const size_t limit     = (argc > 2) ? std::stoul(argv[2]) : 0;
 
     const int K = 5;                 // top-k returned to the user

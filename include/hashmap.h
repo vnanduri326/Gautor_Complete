@@ -30,4 +30,3 @@ public:
     double avgChainLength() const;   // load factor: how well BUCKETS is sized
     size_t longestChain() const;     // worst-case lookup walk
 };
-};

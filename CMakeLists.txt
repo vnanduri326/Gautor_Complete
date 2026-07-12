@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 project(Gautor_Complete VERSION 1.0.0 LANGUAGES CXX)
 
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -20,13 +21,6 @@ target_include_directories(gautor_core PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/includ
 add_executable(benchmark src/benchmark.cpp)
 target_link_libraries(benchmark PRIVATE gautor_core)
 
-find_package(SFML 2.5 COMPONENTS graphics window system)
-if(SFML_FOUND)
-    add_executable(gui src/gui.cpp)
-    target_link_libraries(gui PRIVATE gautor_core sfml-graphics sfml-window sfml-system)
-else()
-    message(WARNING "SFML not found - skipping gui target")
-endif()
 
 enable_testing()
 
@@ -37,6 +31,20 @@ FetchContent_Declare(
         GIT_TAG        v3.4.0
 )
 FetchContent_MakeAvailable(Catch2)
+
+set(SFML_BUILD_DOC OFF CACHE BOOL "" FORCE)
+set(SFML_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+
+FetchContent_Declare(
+        SFML
+        GIT_REPOSITORY https://github.com/SFML/SFML.git
+        GIT_TAG        2.6.1
+)
+FetchContent_MakeAvailable(SFML)
+
+add_executable(gui src/gui.cpp)
+
+target_link_libraries(gui PRIVATE gautor_core sfml-graphics sfml-window sfml-system)
 
 add_executable(trie_tests 
     tests/trie_tests.cpp

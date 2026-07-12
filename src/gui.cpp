@@ -19,7 +19,7 @@
 using Clock = std::chrono::steady_clock;
 
 int main(int argc, char** argv) {
-    const std::string path = (argc > 1) ? argv[1] : "data/unigram_freq.csv";
+    const std::string path = (argc > 1) ? argv[1] : "../data/unigram_freq.csv";
 
     LoadStats ls;
     std::cout << "loading " << path << " ...\n";
@@ -38,11 +38,8 @@ int main(int argc, char** argv) {
     window.setFramerateLimit(60);
 
     sf::Font font;
-    // Put any .ttf at assets/DejaVuSans.ttf, or rely on a system font.
     const char* fontPaths[] = {
-        "assets/DejaVuSans.ttf",
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-        "C:/Windows/Fonts/arial.ttf"
+        "../assets/DejaVuSans.ttf",
     };
     bool fontLoaded = false;
     for (const char* fp : fontPaths)
@@ -58,6 +55,13 @@ int main(int argc, char** argv) {
     double lastQueryMs = 0.0;
 
     auto refresh = [&]() {
+        // Stops refreshing when nothing is typed
+        if (typed.empty()) {
+            suggestions.clear();
+            lastQueryMs = 0.0;
+            return;
+        }
+
         auto t0 = Clock::now();
         suggestions = useTrie ? trie.getTopK(typed, 5) : hash.getTopK(typed, 5);
         auto t1 = Clock::now();
